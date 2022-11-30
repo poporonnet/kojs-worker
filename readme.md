@@ -12,5 +12,5 @@
 ```
 コマンド
 
-./jkworker -lang <langName> -type <type> -id <problemID>
+./jkworker -lang <処理系> -id <問題ID>
 ```
