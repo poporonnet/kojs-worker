@@ -10,6 +10,8 @@ import (
 func Compile(lang util.Language) error {
 	cmd := fmt.Sprintf(lang.CompileCMD, "./test", "./built")
 	res, err := exec.CommandContext(context.Background(), "sh", "-c", cmd).CombinedOutput()
-	fmt.Println(string(res), err)
+	util.Logger.Sugar().Debugf("Compiler Command: %s\n", cmd)
+	util.Logger.Sugar().Debugf("Compiler Message: %s, Compiler Error: %v", string(res), err)
+
 	return nil
 }
