@@ -29,7 +29,7 @@ var LANGUAGE = map[string]Language{
 		Name:       "C",
 		Type:       "GCC",
 		CompileCMD: "gcc -std=gnu11 -O2 %s/main.c -o %s/a.out",
-		ExecCMD:    "%s/a.out",
+		ExecCMD:    "%s/a.out < %s/%s",
 	},
 	"Clang": {
 		Name:       "C",
@@ -52,7 +52,7 @@ var LANGUAGE = map[string]Language{
 	"Ruby": {
 		Name:       "Ruby",
 		Type:       "Ruby",
-		CompileCMD: "cp %s/main.rb %s/ruby -w -c %s/main.rb",
-		ExecCMD:    "ruby %s/%s < %s/%s",
+		CompileCMD: "ruby -w -c %s/main.rb; echo %s > /dev/null",
+		ExecCMD:    "ruby %s/main.rb < %s/%s",
 	},
 }
