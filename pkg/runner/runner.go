@@ -3,18 +3,50 @@ package runner
 import (
 	"context"
 	"fmt"
+	"syscall"
+
+	"time"
+
+	"github.com/k1LoW/exec"
+
 	"github.com/mct-joken/jkojs-worker/pkg/util"
-	"os/exec"
 )
 
-func Run(l util.Language) error {
-	cmd := fmt.Sprintf(l.ExecCMD, "./built", "./case", "test.txt")
-	util.Logger.Sugar().Debugf("Exec Command: %s\n", cmd)
-	res, err := exec.CommandContext(context.Background(), "sh", "-c", cmd).CombinedOutput()
-	util.Logger.Sugar().Debugf("Exec Result: %s, Exec Error: %v\n", string(res), err)
+func Run(l util.Language, status *util.ExecuteStatus, cfg ProblemConfig) error {
 
-	if err != nil {
-		return err
+	for _, v := range cfg.CaseFiles {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(cfg.TimeLimit)*time.Millisecond)
+		defer cancel()
+
+		command := fmt.Sprintf(l.ExecCMD, "./built", "./case", v)
+		// 実行(実行時間制限付き): configにあるミリ秒経過したら実行中でもkillする
+		cmd := exec.CommandContext(ctx, "sh", "-c", command)
+
+		startTime := time.Now()
+		// コマンドを実行する stdout/stderrが返る
+		res, err := cmd.Output()
+
+		// 実行時間(ミリ秒)
+		duration := time.Since(startTime).Milliseconds()
+		// syscall.Rusageは*nixにしか無いメソッド Windowsでは実行できない
+		memUsage := (cmd.ProcessState.SysUsage().(*syscall.Rusage)).Maxrss / 4
+		exitStatus := cmd.ProcessState.ExitCode()
+
+		util.Logger.Sugar().Debugf("Exec Command: %s\n", command)
+		util.Logger.Sugar().Debugf("Exec Result: %s, Exec Error: %v\n", string(res), err)
+
+		status.Results = append(status.Results, util.CaseResult{
+			Output:      string(res),
+			ExitStatus:  exitStatus, // 終了コードが-1のときはTLEで強制終了されている
+			Duration:    int(duration),
+			MemoryUsage: int(memUsage),
+		})
+
+		if err != nil {
+			return err
+		}
+
 	}
+
 	return nil
 }

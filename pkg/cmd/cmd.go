@@ -19,5 +19,5 @@ func Command() {
 
 	util.Logger.Sugar().Debugf("Config load done: language type: %s, problem ID: %s\n", *langFlag, *ID)
 
-	decideLanguage(*langFlag, *ID, *pretty)
+	decideLanguage(*langFlag, *ID)
 }
