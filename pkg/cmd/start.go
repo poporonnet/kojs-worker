@@ -34,7 +34,11 @@ func decideLanguage(langType string, problemID string) {
 
 	runner.Run(v, &status, cfg)
 
-	vv, _ := json.Marshal(status)
-	os.WriteFile("out.json", vv, 0666)
+	resultOutPut, _ := json.Marshal(status)
+	err = os.WriteFile("out.json", resultOutPut, 0666)
+	if err != nil {
+		util.Logger.Sugar().Fatalf("ファイルの出力に失敗: %v", err.Error())
+		return
+	}
 
 }
