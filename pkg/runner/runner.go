@@ -2,7 +2,6 @@ package runner
 
 import (
 	"context"
-	"fmt"
 	"syscall"
 
 	"time"
@@ -18,16 +17,15 @@ func Run(l util.Language, status *util.ExecuteStatus, cfg ProblemConfig) error {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(cfg.TimeLimit)*time.Millisecond)
 		defer cancel()
 
-		command := fmt.Sprintf(l.ExecCMD, "./built", "./case", v)
+		command := l.ExecCMD("./built", "./case", v)
 		// 実行(実行時間制限付き): configにあるミリ秒経過したら実行中でもkillする
 		cmd := exec.CommandContext(ctx, "sh", "-c", command)
 
-		startTime := time.Now()
 		// コマンドを実行する stdout/stderrが返る
 		res, err := cmd.Output()
 
 		// 実行時間(ミリ秒)
-		duration := time.Since(startTime).Milliseconds()
+		duration := cmd.ProcessState.UserTime().Milliseconds()
 		// syscall.Rusageは*nixにしか無いメソッド Windowsでは実行できない
 		memUsage := (cmd.ProcessState.SysUsage().(*syscall.Rusage)).Maxrss / 4
 		exitStatus := cmd.ProcessState.ExitCode()
