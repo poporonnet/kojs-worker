@@ -2,6 +2,7 @@ package runner
 
 import (
 	"context"
+	"strings"
 	"syscall"
 
 	"time"
@@ -34,6 +35,7 @@ func Run(l util.Language, status *util.ExecuteStatus, cfg ProblemConfig) error {
 		util.Logger.Sugar().Debugf("Exec Result: %s, Exec Error: %v\n", string(res), err)
 
 		status.Results = append(status.Results, util.CaseResult{
+			CaseID:      strings.Split(v, ".")[0],
 			Output:      string(res),
 			ExitStatus:  exitStatus, // 終了コードが-1のときはTLEで強制終了されている
 			Duration:    int(duration),
