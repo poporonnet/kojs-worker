@@ -10,14 +10,14 @@ import (
 	- C(GCC/Clang)
 	- C++ (G++/Clang++)
 	- Ruby3
-	- JavaScript (Node.js)
 	- Golang (Golang-Go)
-	- Python3
+	- [ToDo] Python3
+	- [ToDo] JavaScript (Node.js)
+	- [ToDo] Java (JVM)
 
 	- [TBD] Crystal
 	- [TBD] C# (mono)
 	- [TBD] TypeScript (Node.js-TSC)
-	- [TBD] Java (JVM)
 	- [TBD] Rust (Rustc)
 */
 
@@ -78,6 +78,16 @@ var LANGUAGE = map[string]Language{
 		},
 		ExecCMD: func(exec string, caseDir string, casePath string) string {
 			return fmt.Sprintf("ruby %s/main.rb < %s/%s", exec, caseDir, casePath)
+		},
+	},
+	"Go": {
+		Name: "Go",
+		Type: "Go",
+		CompileCMD: func(i string, o string) string {
+			return fmt.Sprintf("CGO_ENABLED=0 go build -o %s/a.out %s/main.go", o, i)
+		},
+		ExecCMD: func(exec string, caseDir string, caseFileName string) string {
+			return fmt.Sprintf("%s/a.out < %s/%s", exec, caseDir, caseFileName)
 		},
 	},
 }
