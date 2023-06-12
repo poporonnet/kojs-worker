@@ -74,7 +74,7 @@ var LANGUAGE = map[string]Language{
 		Name: "Ruby",
 		Type: "Ruby",
 		CompileCMD: func(i string, o string) string {
-			return fmt.Sprintf("ruby -w -c %s/main.rb; echo %s > /dev/null", i, o)
+			return fmt.Sprintf("ruby -w -c %s/main.rb; cp %s/main.rb %s/main.rb", i, i, o)
 		},
 		ExecCMD: func(exec string, caseDir string, casePath string) string {
 			return fmt.Sprintf("ruby %s/main.rb < %s/%s", exec, caseDir, casePath)
@@ -88,6 +88,16 @@ var LANGUAGE = map[string]Language{
 		},
 		ExecCMD: func(exec string, caseDir string, caseFileName string) string {
 			return fmt.Sprintf("%s/a.out < %s/%s", exec, caseDir, caseFileName)
+		},
+	},
+	"Python3": {
+		Name: "Python3",
+		Type: "Python3",
+		CompileCMD: func(i string, o string) string {
+			return fmt.Sprintf("cp %s/main.py %s/main.py", i, o)
+		},
+		ExecCMD: func(exec string, caseDir string, caseFileName string) string {
+			return fmt.Sprintf("python3 %s/main.py < %s/%s", exec, caseDir, caseFileName)
 		},
 	},
 }
